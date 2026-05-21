@@ -1,5 +1,5 @@
 Ollama Tic-Tac-Toe AI
-
+!!WARNING, This is an experimental project, This project explores generative AI-driven NPC behaviour using local LLMs.
 A C# console Tic-Tac-Toe game using Ollama and OllamaSharp to power an AI opponent through a local large language model.
 
 Features
