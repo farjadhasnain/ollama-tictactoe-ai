@@ -1,4 +1,12 @@
 Ollama Tic-Tac-Toe AI
+## Important Note
+
+This project intentionally uses a generative AI model for experimentation and research purposes.
+
+For a traditional Tic-Tac-Toe AI, deterministic algorithms such as minimax would be faster and more optimal.
+
+The goal of this project is to explore the use of local LLMs as a behavioural decision layer for NPC development and game AI experimentation.
+
 !!WARNING, This is an experimental project, This project explores generative AI-driven NPC behaviour using local LLMs.
 A C# console Tic-Tac-Toe game using Ollama and OllamaSharp to power an AI opponent through a local large language model.
 
