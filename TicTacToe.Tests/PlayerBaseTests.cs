@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using TicTacToe.App.Player;
+using GameEngine.Player;
 
 namespace TicTacToe.Tests
 {

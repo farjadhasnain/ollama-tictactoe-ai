@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using GameEngine;
-using TicTacToe.App.Player;
+using GameEngine.Player;
 using GameEngine.Enums;
 
 namespace TicTacToe.Tests

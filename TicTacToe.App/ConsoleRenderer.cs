@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using TicTacToe.App.Player;
+using GameEngine.Player;
 
 namespace TicTacToe.App
 {
     public static class ConsoleRenderer
     {
-        public static void DrawBoard(Dictionary<string, string> board, PlayerBase p1, PlayerBase p2)
+        public static void DrawBoard(IReadOnlyDictionary<string, string> board, PlayerBase p1, PlayerBase p2)
         {
             Console.WriteLine($"Player 1: {p1.Name} [{p1.Symbol}]   Player 2: {p2.Name} [{p2.Symbol}]");
             Console.WriteLine();
@@ -19,7 +19,7 @@ namespace TicTacToe.App
             Console.WriteLine();
         }
 
-        private static string Cell(Dictionary<string, string> board, string key)
+        private static string Cell(IReadOnlyDictionary<string, string> board, string key)
         {
             return board[key] == "" ? "." : board[key];
         }
