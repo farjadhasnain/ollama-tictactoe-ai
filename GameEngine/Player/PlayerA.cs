@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.App.Player
+namespace GameEngine.Player
 {
     public class PlayerA : PlayerBase
     {

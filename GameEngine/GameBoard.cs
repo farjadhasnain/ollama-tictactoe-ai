@@ -1,21 +1,49 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace GameEngine
 {
     public class GameBoard
     {
-        public Dictionary<string, string> Board { get; } = new Dictionary<string, string>
+        private readonly Dictionary<string, string> _board = new Dictionary<string, string>
         {
             {"A1", ""}, {"A2", ""}, {"A3", ""},
             {"B1", ""}, {"B2", ""}, {"B3", ""},
             {"C1", ""}, {"C2", ""}, {"C3", ""}
         };
 
+        public IReadOnlyDictionary<string, string> Board { get; }
+
+        public GameBoard()
+        {
+            Board = new ReadOnlyDictionary<string, string>(_board);
+        }
+
+        internal void PlaceMove(string position, string symbol)
+        {
+            _board[position] = symbol;
+        }
+
+        private static readonly string[][] _winningLines =
+        {
+            new[] { "A1", "A2", "A3" }, new[] { "B1", "B2", "B3" }, new[] { "C1", "C2", "C3" },
+            new[] { "A1", "B1", "C1" }, new[] { "A2", "B2", "C2" }, new[] { "A3", "B3", "C3" },
+            new[] { "A1", "B2", "C3" }, new[] { "A3", "B2", "C1" }
+        };
+
+        public IReadOnlyList<string> GetWinningPositions()
+        {
+            foreach (var line in _winningLines)
+            {
+                if (Match(line[0], line[1], line[2])) return Array.AsReadOnly(line);
+            }
+            return Array.Empty<string>();
+        }
+
         public bool CheckWin()
         {
-            return (Match("A1","A2","A3") || Match("B1","B2","B3") || Match("C1","C2","C3") ||
-                    Match("A1","B1","C1") || Match("A2","B2","C2") || Match("A3","B3","C3") ||
-                    Match("A1","B2","C3") || Match("A3","B2","C1"));
+            return GetWinningPositions().Count > 0;
         }
 
         public bool CheckTie()

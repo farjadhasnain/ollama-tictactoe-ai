@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.4.11612.150 stable
+VisualStudioVersion = 18.4.11612.150
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.App", "TicTacToe.App\TicTacToe.App.csproj", "{B52D2BCC-E838-4A26-8AAE-8CF4ECAC2CD8}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -11,6 +11,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEngine", "GameEngine\GameEngine.csproj", "{981B3AB0-D826-4DFB-8FE8-26DCD14300CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.Tests", "TicTacToe.Tests\TicTacToe.Tests.csproj", "{FE7413F7-9009-4A6D-A961-780C932063A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.Ai", "TicTacToe.Ai\TicTacToe.Ai.csproj", "{C0C487EA-A6B4-410E-A753-82E61D65F7A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.Web", "TicTacToe.Web\TicTacToe.Web.csproj", "{20012E15-67B9-40E2-B2E8-FFD8894D68C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,10 +30,18 @@ Global
 		{981B3AB0-D826-4DFB-8FE8-26DCD14300CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{981B3AB0-D826-4DFB-8FE8-26DCD14300CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{981B3AB0-D826-4DFB-8FE8-26DCD14300CC}.Release|Any CPU.Build.0 = Release|Any CPU
-	{FE7413F7-9009-4A6D-A961-780C932063A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-	{FE7413F7-9009-4A6D-A961-780C932063A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-	{FE7413F7-9009-4A6D-A961-780C932063A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-	{FE7413F7-9009-4A6D-A961-780C932063A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE7413F7-9009-4A6D-A961-780C932063A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE7413F7-9009-4A6D-A961-780C932063A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE7413F7-9009-4A6D-A961-780C932063A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE7413F7-9009-4A6D-A961-780C932063A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0C487EA-A6B4-410E-A753-82E61D65F7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0C487EA-A6B4-410E-A753-82E61D65F7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0C487EA-A6B4-410E-A753-82E61D65F7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0C487EA-A6B4-410E-A753-82E61D65F7A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20012E15-67B9-40E2-B2E8-FFD8894D68C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20012E15-67B9-40E2-B2E8-FFD8894D68C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20012E15-67B9-40E2-B2E8-FFD8894D68C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20012E15-67B9-40E2-B2E8-FFD8894D68C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

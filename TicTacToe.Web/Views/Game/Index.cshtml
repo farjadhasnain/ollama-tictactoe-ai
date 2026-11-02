@@ -1,0 +1,71 @@
+@model GamePageViewModel
+@{
+    var game = Model.Game;
+    string status = !game.Started ? "Ready when you are." : game.Status == GameStatus.Won
+        ? $"{game.Winner} wins!" : game.Status == GameStatus.Draw ? "It's a draw!"
+        : game.AiTurn ? "The AI's turn is waiting. Retry to continue." : $"{game.CurrentPlayer}'s turn · {game.CurrentSymbol}";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+</head>
+<body class="@(game.Started ? "started" : "")">
+    <main>
+        <header><p class="eyebrow">A little friendly competition</p><h1>Tic Tac Toe<span>.</span></h1><p>Two players. Nine squares. Your move.</p></header>
+        <div class="game-layout">
+            <section class="setup panel" aria-labelledby="setup-title">
+                <h2 id="setup-title">Make it a match</h2>
+                <form method="post" asp-controller="Game" asp-action="Start" data-start>
+                    <input type="hidden" name="revision" value="@game.Revision" />
+                    <label for="mode">Play against</label>
+                    <select id="mode" name="mode"><option value="human">A friend · same device</option><option value="ai" selected="@game.AgainstAi">AI opponent</option></select>
+                    <label for="name1">Your name · X</label>
+                    <input id="name1" name="name1" value="@(game.Player1 ?? "Player 1")" maxlength="40" required />
+                    <div data-human>
+                        <label for="name2">Your friend's name · O</label>
+                        <input id="name2" name="name2" value="@(game.AgainstAi ? "Player 2" : game.Player2 ?? "Player 2")" maxlength="40" />
+                    </div>
+                    <div data-ai>
+                        <label for="difficulty">AI difficulty</label>
+                        <select id="difficulty" name="difficulty">
+                            <option value="Easy" selected="@(game.Difficulty == DifficultyLevel.Easy)">Easy</option><option value="Medium" selected="@(game.Difficulty == DifficultyLevel.Medium)">Medium</option><option value="Hard" selected="@(game.Difficulty == DifficultyLevel.Hard)">Hard</option>
+                        </select>
+                    </div>
+                    <button class="primary" type="submit">@(game.Started ? "Start a new match" : "Let's play") <span aria-hidden="true">↗</span></button>
+                </form>
+                <p class="hint">X goes first. Get three in a row to win.</p>
+            </section>
+            <section class="play panel" aria-label="Game board">
+                <div class="players"><span class="player-x">X <b>@(game.Player1 ?? "Player 1")</b></span><span class="player-o">O <b>@(game.Player2 ?? "Player 2")</b></span></div>
+                <p class="status" role="status" aria-live="polite" data-status>@status</p>
+                @if (!string.IsNullOrEmpty(Model.Error)) { <p class="error" role="alert">@Model.Error</p> }
+                <form method="post" asp-controller="Game" asp-action="Move" class="board" data-move data-ai-opponent="@game.AgainstAi.ToString().ToLowerInvariant()">
+                    <input type="hidden" name="revision" value="@game.Revision" />
+                    @foreach (var cell in game.Cells)
+                    {
+                        <button class="cell @(cell.Value == "X" ? "player-x" : "player-o") @(game.WinningPositions.Contains(cell.Key) ? "winning" : "")" type="submit" name="position" value="@cell.Key"
+                            disabled="@(!game.Started || game.Status != GameStatus.InProgress || game.AiTurn || cell.Value != "")"
+                            aria-label="@cell.Key: @(cell.Value == "" ? "empty" : cell.Value)">
+                            @if (cell.Value == "") { <span class="coordinate">@cell.Key</span> } else { @cell.Value }
+                        </button>
+                    }
+                </form>
+                @if (game.AiTurn)
+                {
+                    <form method="post" asp-controller="Game" asp-action="RetryAi" data-retry>
+                        <input type="hidden" name="revision" value="@game.Revision" />
+                        <button type="submit" class="primary">Retry AI turn</button>
+                    </form>
+                }
+                <p class="hint">@(game.Status == GameStatus.InProgress ? "Every square is a possibility." : "Another round? Start a new match.")</p>
+            </section>
+        </div>
+        <footer>Made for a good game.</footer>
+    </main>
+</body>
+</html>

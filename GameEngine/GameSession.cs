@@ -1,5 +1,6 @@
+using System;
 using GameEngine.Enums;
-using TicTacToe.App.Player;
+using GameEngine.Player;
 
 namespace GameEngine
 {
@@ -16,6 +17,10 @@ namespace GameEngine
 
         public GameSession(PlayerBase player1, PlayerBase player2)
         {
+            ArgumentNullException.ThrowIfNull(player1);
+            ArgumentNullException.ThrowIfNull(player2);
+            if (player1.Symbol == player2.Symbol) throw new ArgumentException("Players must have different symbols.");
+
             _player1 = player1;
             _player2 = player2;
             Board = new GameBoard();
@@ -25,17 +30,26 @@ namespace GameEngine
 
         public bool TryMakeMove(string position)
         {
+            return TryMakeMove(position, out _);
+        }
+
+        public bool TryMakeMove(string position, out string error)
+        {
+            error = null;
+            position = position?.Trim().ToUpperInvariant();
             if (Status != GameStatus.InProgress)
             {
+                error = "The game is already over.";
                 return false;
             }
 
             if (!CurrentPlayer.IsValidMove(Board.Board, position))
             {
+                error = "Choose an empty cell on the board.";
                 return false;
             }
 
-            CurrentPlayer.MakeMove(Board.Board, position);
+            Board.PlaceMove(position, CurrentPlayer.Symbol);
 
             if (Board.CheckWin())
             {

@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-namespace TicTacToe.App.Player
+namespace GameEngine.Player
 {
     public class PlayerBase
     {
-        public string Name { get; set; }
-        public string Symbol { get; set; }
+        public string Name { get; }
+        public string Symbol { get; }
 
         public PlayerBase(string name, string symbol)
         {
-            Name = name;
-            Symbol = symbol;
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Enter a player name.", nameof(name));
+            if (string.IsNullOrWhiteSpace(symbol)) throw new ArgumentException("Enter a player symbol.", nameof(symbol));
+
+            Name = name.Trim();
+            Symbol = symbol.Trim().ToUpperInvariant();
         }
 
         public void MakeMove(Dictionary<string, string> board, string position)
@@ -18,9 +22,9 @@ namespace TicTacToe.App.Player
             board[position] = Symbol;
         }
 
-        public bool IsValidMove(Dictionary<string, string> board, string position)
+        public bool IsValidMove(IReadOnlyDictionary<string, string> board, string position)
         {
-            return board.ContainsKey(position) && board[position] == "";
+            return position != null && board.ContainsKey(position) && board[position] == "";
         }
     }
 }

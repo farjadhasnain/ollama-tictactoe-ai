@@ -1,45 +1,45 @@
-Ollama Tic-Tac-Toe AI
-## Important Note
+# Tic Tac Toe
 
-This project intentionally uses a generative AI model for experimentation and research purposes.
+Console and ASP.NET Core MVC applications using the same C# game engine. Both support two people playing on the same device and a human playing against an Ollama AI opponent.
 
-For a traditional Tic-Tac-Toe AI, deterministic algorithms such as minimax would be faster and more optimal.
+## Run
 
-The goal of this project is to explore the use of local LLMs as a behavioural decision layer for NPC development and game AI experimentation.
+Install the .NET 10 SDK, then run either frontend from the repository root:
 
-!!WARNING, This is an experimental project, This project explores generative AI-driven NPC behaviour using local LLMs.
-A C# console Tic-Tac-Toe game using Ollama and OllamaSharp to power an AI opponent through a local large language model.
+```powershell
+# Console
+dotnet run --project TicTacToe.App
 
-Features
-Human vs Human mode
-Human vs AI mode
-AI difficulty selection
-Local LLM integration using Ollama
-Prompt-driven NPC behaviour
-JSON move validation
-Technologies
-C#
-.NET
-Ollama
-OllamaSharp
-Local LLMs
-Why?
+# Web: open http://localhost:5080
+dotnet run --project TicTacToe.Web -- --urls http://localhost:5080
+```
 
-This project explores the use of generative AI as a behavioural layer for NPC development.
+For AI games, start Ollama and install the configured model:
 
-Instead of hardcoding every move, the game passes the board state and difficulty level into a prompt, and the AI generates its next move dynamically.
+```powershell
+ollama pull gemma4
+ollama serve
+```
 
-Example
-X - O
-- X -
-- - O
+The default endpoint is `http://localhost:11434` and the default model is `gemma4`. Set `Ollama__Endpoint` and `Ollama__Model` environment variables to override them for either frontend. The web defaults are also in `TicTacToe.Web/appsettings.json`.
 
-AI response:
+The AI plays O in the web app and chooses a different symbol from the human in the console. Difficulty adjusts the existing prompt and temperature; hard mode does not guarantee optimal play. If Ollama is unavailable, exceeds the 30-second request timeout, or returns an invalid move, the AI plays the first available cell, preserving the original fallback behavior.
 
-{ "row": 2, "col": 1 }
-Future Ideas
-Personality-based NPCs
-Adaptive AI opponents
-Memory-aware NPCs
-Voice-controlled NPC interaction
-AI-driven strategy games
+## Projects
+
+- `GameEngine`: board, players, move validation, turn order, winning positions, and results. Contains no UI or Ollama dependencies. Submit moves through `GameSession.TryMakeMove`; the board and player identities are read-only to consumers.
+- `TicTacToe.Ai`: asynchronous Ollama-backed opponent using an injected `IChatClient`. It determines its move; each frontend applies that move through the engine.
+- `TicTacToe.App`: console input, board rendering, and game loop.
+- `TicTacToe.Web`: MVC controllers, typed view models, Razor views, game orchestration, and server-side storage. No JavaScript is required to play; JavaScript adds the thinking indicator and mode controls.
+- `TicTacToe.Tests`: NUnit tests for engine behavior, AI responses/failures/cancellation, and web game isolation and turn handling.
+
+Web games are isolated by a session cookie and retained in memory for one idle hour. Restarting the server clears them. Multiple tabs in one browser share a game; revision checks reject stale or duplicate moves. An interrupted AI turn can be retried from the board. Online multiplayer across devices and persistent game history are outside this version.
+
+All projects now target .NET 10 instead of .NET Framework 4.7.2. A future C# frontend can reference `GameEngine` directly; a frontend in another language can use a host exposing the same engine over HTTP.
+
+## Verify
+
+```powershell
+dotnet build TicTacToe.App.sln -c Release
+dotnet test TicTacToe.Tests/TicTacToe.Tests.csproj -c Release --settings TicTacToe.Tests/coverage.runsettings --collect:"Code Coverage;Format=Cobertura"
+```

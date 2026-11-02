@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System;
 
-namespace TicTacToe.App.Player
+namespace GameEngine.Player
 {
     public class PlayerB : PlayerBase
     {

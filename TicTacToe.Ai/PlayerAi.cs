@@ -1,13 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GameEngine.Enums;
 using Microsoft.Extensions.AI;
-using OllamaSharp;
+using GameEngine.Player;
+using System.Threading;
 
-namespace TicTacToe.App.Player
+namespace TicTacToe.Ai
 {
     public class PlayerAi : PlayerBase
     {
@@ -15,51 +16,37 @@ namespace TicTacToe.App.Player
 
         private readonly IChatClient _chatClient;
 
-        public PlayerAi(string name, string symbol, DifficultyLevel difficulty, string model = "gemma4")
+        public PlayerAi(string name, string symbol, DifficultyLevel difficulty, IChatClient chatClient)
             : base(name, symbol)
         {
             Difficulty = difficulty;
-            _chatClient = new OllamaApiClient(new System.Uri("http://localhost:11434"), model);
+            _chatClient = chatClient ?? throw new ArgumentNullException(nameof(chatClient));
         }
 
-        public string GetMove(Dictionary<string, string> board)
+        public async Task<string> GetMoveAsync(IReadOnlyDictionary<string, string> board, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!board.Any(cell => cell.Value == "")) return null;
+
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            timeout.CancelAfter(TimeSpan.FromSeconds(30));
+
             try
             {
                 string prompt = BuildPrompt(board);
                 ChatOptions options = new ChatOptions { Temperature = GetTemperature() };
+                var response = await _chatClient.GetResponseAsync(prompt, options, timeout.Token);
+                cancellationToken.ThrowIfCancellationRequested();
 
-                string response = Task.Run(() => _chatClient.GetResponseAsync(prompt, options))
-                                      .GetAwaiter().GetResult()
-                                      .Text
-                                      .Trim()
-                                      .ToUpper();
-
-                string position = ExtractPosition(response, board);
-
-                Console.WriteLine($"AI plays: {position}");
-                System.Threading.Thread.Sleep(800);
-
-                return position;
+                return ExtractPosition(response.Text?.Trim().ToUpperInvariant() ?? "", board);
             }
-            catch (Exception ex)
+            catch (Exception) when (!cancellationToken.IsCancellationRequested)
             {
-                Console.WriteLine($"AI error: {ex.Message}");
-                Console.WriteLine("Is Ollama running? Run: ollama serve");
-                Console.WriteLine("Falling back to first available cell.");
-                Console.ReadKey();
-
-                foreach (var pair in board)
-                    if (pair.Value == "")
-                    {
-                        return pair.Key;
-                    }
-
-                return null;
+                return board.FirstOrDefault(cell => cell.Value == "").Key;
             }
         }
 
-        private string BuildPrompt(Dictionary<string, string> board)
+        private string BuildPrompt(IReadOnlyDictionary<string, string> board)
         {
             string persona;
             switch (Difficulty)
@@ -94,7 +81,7 @@ namespace TicTacToe.App.Player
                 .ToString();
         }
 
-        private string BuildBoardDisplay(Dictionary<string, string> board)
+        private string BuildBoardDisplay(IReadOnlyDictionary<string, string> board)
         {
             return new StringBuilder()
                 .AppendLine("     1   |   2   |   3")
@@ -106,7 +93,7 @@ namespace TicTacToe.App.Player
                 .ToString();
         }
 
-        private string Cell(Dictionary<string, string> board, string key)
+        private string Cell(IReadOnlyDictionary<string, string> board, string key)
         {
             return board[key] == "" ? "." : board[key];
         }
@@ -124,7 +111,7 @@ namespace TicTacToe.App.Player
 
         // Scans the LLM response for a valid board position
         // Handles cases where the LLM adds extra words like "I'll play A1"
-        private string ExtractPosition(string raw, Dictionary<string, string> board)
+        private string ExtractPosition(string raw, IReadOnlyDictionary<string, string> board)
         {
             foreach (string key in board.Keys)
             {
